@@ -22,7 +22,9 @@ def CHash(string):
     hashedblocks = []
     
     #now we will perform a set of operations over each block of 128
-    
+
+
+    bigcount = 0
     for x in bigblocks:
 
 
@@ -31,10 +33,14 @@ def CHash(string):
         blocks = [x[16*i:16*(i+1)] for i in range(8)]
 
 
+
         #next, we compute this sequence of functions on each of the 8 blocks
+        #this function was designed based on empircal tests to maximize collision resistance
+        if bigcount == len(bigblocks)-1:
+            c = [collatz(ordstr_s(i)**16+ordstr_s2(i)**8+ordstr_a(i)**2) for i in blocks]
+        else:
+            c = [collatz(ordstr_s(i)**16+ordstr_s2(i)**8) for i in blocks]
 
-
-        c = [collatz(ordstr_s(i)**16+ordstr_s2(i)**8) for i in blocks]
 
         #now, we XOR the 8 blocks in a predetermined pattern
         #this leaves us with 4 blocks
@@ -102,6 +108,11 @@ def CHash(string):
 
 #these are the functions used
 
+def ordstr_a(string):
+    out = ""
+    for i in string:
+        out += str(ord(i))
+    return int(out)
 
 #this takes a string, computes the ascii value of each character, then returns their sum
 def ordstr_s(string):
